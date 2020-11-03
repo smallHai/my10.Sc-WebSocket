@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>socket</title>
+    <script src="socket.io.js"></script>
+    <script>
+        const sock = io.connect("ws://localhost:8080/")
+
+        window.onload = function(){
+            let $user = document.getElementById('user')
+            let $pass = document.getElementById('pass')
+            let $regist = document.getElementById('regist')
+            let $login = document.getElementById('login')
+
+            $regist.addEventListener("click",function(){
+                let user = $user.value
+                let pass = $pass.value
+                if(user && pass){
+                    if(user.length >=4 && pass >=6){
+                        sock.emit("toRegist",user,pass)
+                    }else{
+                        alert("用户或密码不符合规范")
+                    }
+                }else{
+                    alert("用户或密码不能为空")
+                }
+            })
+            sock.on("forRegist",(code,msg)=>{
+                alert(msg)
+            })
+
+            $login.addEventListener("click",function(){
+                let user = $user.value
+                let pass = $pass.value
+                if(user && pass){
+                    if(user.length >=4 && pass >=6){
+                        sock.emit("toLogin",user,pass)
+                    }else{
+                        alert("用户或密码不符合规范")
+                    }
+                }else{
+                    alert("用户或密码不能为空")
+                }
+            })
+            sock.on("forLogin",(code,msg)=>{
+                alert(msg)
+            })
+
+        }
+    </script>
+</head>
+<body>
+    用户：<input type="text" id="user"><br>
+    密码：<input type="password" id="pass"><br>
+    <input type="button" value="注册" id="regist">
+    <input type="button" value="登陆" id="login">
+</body>
+</html>

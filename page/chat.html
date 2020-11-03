@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>chat</title>
+    <style>
+        ul{list-style: none;padding: 0;}
+        ul li{padding: 10px 20px;}
+        ul li.my{background: green;color: white;}
+        textarea{resize: none;}
+    </style>
+    <script src="socket.io.js"></script>
+    <script>
+        const sock = io.connect("ws://localhost:8080/")
+
+        window.onload = function(){
+            let $user = document.getElementById('user')
+            let $pass = document.getElementById('pass')
+            let $regist = document.getElementById('regist')
+            let $login = document.getElementById('login')
+            let $content = document.getElementById('content')
+            let $send = document.getElementById('send')
+            let $list = document.getElementById('list')
+
+            $regist.addEventListener("click",function(){
+                let user = $user.value
+                let pass = $pass.value
+                if(user && pass){
+                    if(user.length >=4 && pass >=6){
+                        sock.emit("toRegist",user,pass)
+                    }else{
+                        alert("用户或密码不符合规范")
+                    }
+                }else{
+                    alert("用户或密码不能为空")
+                }
+            })
+            sock.on("forRegist",(code,msg)=>{
+                alert(msg)
+            })
+
+            $login.addEventListener("click",function(){
+                let user = $user.value
+                let pass = $pass.value
+                if(user && pass){
+                    if(user.length >=4 && pass >=6){
+                        sock.emit("toLogin",user,pass)
+                    }else{
+                        alert("用户或密码不符合规范")
+                    }
+                }else{
+                    alert("用户或密码不能为空")
+                }
+            })
+            sock.on("forLogin",(code,msg)=>{
+                alert(msg)
+            })
+
+            $send.addEventListener("click",function(){
+                let user = $user.value
+                let content = $content.value
+                if(content){
+                    sock.emit("toSend",user,content)
+                }else{
+                    alert("发送内容不能为空")
+                }
+            })
+            sock.on("forSend",(code,msg,user,content)=>{
+                alert(msg)
+                if(!code){
+                    let $li = document.createElement("li")
+                    $li.className = "my"
+                    $li.innerHTML = `<strong>${user}：</strong>${content}`
+                    $list.appendChild($li)
+                }
+                $content.value = ""
+            })
+            sock.on("toSend",(user,content)=>{
+                let $li = document.createElement("li")
+                $li.innerHTML = `<strong>${user}：</strong>${content}`
+                $list.appendChild($li)
+            })
+
+        }
+    </script>
+    <script>
+        // <li><strong>李四：</strong>123456</li>
+    </script>
+</head>
+<body>
+    用户：<input type="text" id="user"><br>
+    密码：<input type="password" id="pass"><br>
+    <input type="button" value="注册" id="regist">
+    <input type="button" value="登陆" id="login">
+    <hr>
+    <textarea cols="50" rows="5" id="content"></textarea><br>
+    <input type="button" value="发送" id="send">
+    <hr>
+    <ul id="list"></ul>
+</body>
+</html>

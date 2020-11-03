@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>http</title>
+    <script src="jquery.js"></script>
+    <script>
+        $(function(){
+
+            $("#regist").click(function(){
+                var user = $("#user").val()
+                var pass = $("#pass").val()
+                if(user && pass){
+                    if(user.length >=4 && pass >=6){
+                        $.ajax({
+                            url: "/regist",
+                            data: {
+                                username: user,
+                                password: pass
+                            },
+                            dataType: "json",
+                            success: function(res){
+                                alert(res.msg)
+                            },
+                            error: function(err){
+                                alert(err)
+                            }
+                        })
+                    }else{
+                        alert("用户或密码不符合规范")
+                    }
+                }else{
+                    alert("用户或密码不能为空")
+                }
+            })
+
+            $("#login").click(function(){
+                var user = $("#user").val()
+                var pass = $("#pass").val()
+                if(user && pass){
+                    if(user.length >=4 && pass >=6){
+                        $.ajax({
+                            url: "/login",
+                            data: {
+                                username: user,
+                                password: pass
+                            },
+                            dataType: "json",
+                            success: function(res){
+                                alert(res.msg)
+                            },
+                            error: function(err){
+                                alert(err)
+                            }
+                        })
+                    }else{
+                        alert("用户或密码不符合规范")
+                    }
+                }else{
+                    alert("用户或密码不能为空")
+                }
+            })
+
+        })
+    </script>
+</head>
+<body>
+    用户：<input type="text" id="user"><br>
+    密码：<input type="password" id="pass"><br>
+    <input type="button" value="注册" id="regist">
+    <input type="button" value="登陆" id="login">
+</body>
+</html>
